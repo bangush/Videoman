@@ -71,22 +71,12 @@ namespace Videoman
                 {
                     axWindowsMediaPlayer1.settings.autoStart = true;
                     currentBuffer = chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
-                    foreach (byte b in buffer)
+                    for (i = 0; i < chunksize && currentBuffer > 0; i++)
                     {
-                        // TODO: Actually encrypt data
-                        if (currentBuffer > 0)
-                        {
-                            fw.WriteByte((byte)(b ^ 0x7c));
-                            currentBuffer--;
-                        }
+                        fw.WriteByte((byte)(buffer[i] ^ key[i % key.Length]));
+                        currentBuffer--;
                         cancelToken.ThrowIfCancellationRequested();
                     }
-                    //for (i = 0; i < chunksize && currentBuffer > 0; i++)
-                    //{
-                    //    fw.WriteByte((byte)(buffer[i] ^ key[i % key.Length]));
-                    //    currentBuffer--;
-                    //    cancelToken.ThrowIfCancellationRequested();
-                    //}
                     currentBytesRemaining -= chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
                     progressBar1.Invoke(new Action(() =>
                     {
