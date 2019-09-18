@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime;
 
 namespace Videoman
 {
@@ -55,26 +56,32 @@ namespace Videoman
                 // Current Buffer prevents from creating a file bigger than the original
                 long currentBuffer;
                 var buffer = new byte[chunksize];
-                axWindowsMediaPlayer1.URL = output;
-                while ((bytesRead = fs.Read(buffer, 0, chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining)) > 0)
+                using (MemoryStream memStr = new MemoryStream(buffer))
                 {
-                    currentBuffer = chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
-                    foreach (byte b in buffer)
+                    axWindowsMediaPlayer1.URL = output;
+                    //fs.CopyTo(memStr, chunksize);
+                    while ((bytesRead = fs.Read(buffer, 0, chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining)) > 0)
                     {
-                        // TODO: Actually encrypt data
-                        if (currentBuffer > 0)
+                        currentBuffer = chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
+                        foreach (byte b in buffer)
                         {
-                            fw.WriteByte((byte)(b ^ 0x7c));
-                            currentBuffer--;
+                            // TODO: Actually encrypt data
+                            if (currentBuffer > 0)
+                            {
+                                fw.WriteByte((byte)(b ^ 0x7c));
+                                currentBuffer--;
+                            }
+                            cancelToken.ThrowIfCancellationRequested();
                         }
-                        cancelToken.ThrowIfCancellationRequested();
+                        currentBytesRemaining -= chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
+                        progressBar1.Invoke(new Action(() =>
+                        {
+                            progressBar1.PerformStep();
+                        }));
                     }
-                    currentBytesRemaining -= chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
-                    progressBar1.Invoke(new Action(() =>
-                    {
-                        progressBar1.PerformStep();
-                    })); 
+                    
                 }
+                
             }
             progressBar1.Invoke(new Action(() =>
             {
@@ -86,13 +93,14 @@ namespace Videoman
         // go() needs to be async 'cause you can only call an async Thread while in an async context
         private async void go(int bufferMultiplierValue)
         {
-            //try
-            //{
+            try
+            {
                 await Task.Run(() => encrypt(file, (int)bufferSize.Value * bufferMultiplierValue, file + ".out.mp4", encryptCancel.Token));
-            //} catch (Exception)
-            //{
-            //    MessageBox.Show("Thread Cancelled");
-            //} 
+            } catch (OperationCanceledException)
+            {
+                File.Delete(file + ".out.mp4");
+                MessageBox.Show("Thread Cancelled");
+            } 
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -103,12 +111,13 @@ namespace Videoman
 
         private void ResetBtn_Click(object sender, EventArgs e)
         {
-            file = "";
             selectFile.Enabled = true;
             resetBtn.Enabled = false;
             runBtn.Enabled = false;
+            progressBar1.Value = 0;
             if (!encryptCancel.IsCancellationRequested)
                 encryptCancel.Cancel();
+            file = "";
         }
 
         private void RunBtn_Click(object sender, EventArgs e)
