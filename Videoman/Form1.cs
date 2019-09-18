@@ -34,7 +34,16 @@ namespace Videoman
             }
         }
 
-        private async Task encrypt(String path, int chunksize, String output, CancellationToken cancelToken)
+        private byte[] runTroughXOR(byte[] data, byte[] key)
+        {
+            byte[] xor = new byte[data.Length];
+            for (int i = 0; i < data.Length; i++) {
+                xor[i] = (byte)(data[i] ^ key[i % key.Length]);
+            }
+            return xor;
+        }
+
+        private async Task encrypt(String path, int chunksize, String output, byte[] key, CancellationToken cancelToken)
         {
             using (FileStream fw = new FileStream(output, FileMode.Create, FileAccess.Write))
             using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -55,31 +64,34 @@ namespace Videoman
                 long currentBytesRemaining = fullsize;
                 // Current Buffer prevents from creating a file bigger than the original
                 long currentBuffer;
+                int i;
                 var buffer = new byte[chunksize];
-                using (MemoryStream memStr = new MemoryStream(buffer))
+                axWindowsMediaPlayer1.URL = output;
+                while ((bytesRead = fs.Read(buffer, 0, chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining)) > 0)
                 {
-                    axWindowsMediaPlayer1.URL = output;
-                    //fs.CopyTo(memStr, chunksize);
-                    while ((bytesRead = fs.Read(buffer, 0, chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining)) > 0)
+                    axWindowsMediaPlayer1.settings.autoStart = true;
+                    currentBuffer = chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
+                    foreach (byte b in buffer)
                     {
-                        currentBuffer = chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
-                        foreach (byte b in buffer)
+                        // TODO: Actually encrypt data
+                        if (currentBuffer > 0)
                         {
-                            // TODO: Actually encrypt data
-                            if (currentBuffer > 0)
-                            {
-                                fw.WriteByte((byte)(b ^ 0x7c));
-                                currentBuffer--;
-                            }
-                            cancelToken.ThrowIfCancellationRequested();
+                            fw.WriteByte((byte)(b ^ 0x7c));
+                            currentBuffer--;
                         }
-                        currentBytesRemaining -= chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
-                        progressBar1.Invoke(new Action(() =>
-                        {
-                            progressBar1.PerformStep();
-                        }));
+                        cancelToken.ThrowIfCancellationRequested();
                     }
-                    
+                    //for (i = 0; i < chunksize && currentBuffer > 0; i++)
+                    //{
+                    //    fw.WriteByte((byte)(buffer[i] ^ key[i % key.Length]));
+                    //    currentBuffer--;
+                    //    cancelToken.ThrowIfCancellationRequested();
+                    //}
+                    currentBytesRemaining -= chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining;
+                    progressBar1.Invoke(new Action(() =>
+                    {
+                        progressBar1.PerformStep();
+                    }));
                 }
                 
             }
@@ -95,7 +107,7 @@ namespace Videoman
         {
             try
             {
-                await Task.Run(() => encrypt(file, (int)bufferSize.Value * bufferMultiplierValue, file + ".out.mp4", encryptCancel.Token));
+                await Task.Run(() => encrypt(file, (int)bufferSize.Value * bufferMultiplierValue, file + ".out.mp4", new byte[] { 0x7c }, encryptCancel.Token));
             } catch (OperationCanceledException)
             {
                 File.Delete(file + ".out.mp4");
