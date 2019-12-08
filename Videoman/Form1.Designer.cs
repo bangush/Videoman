@@ -41,6 +41,8 @@
             this.bufferType = new System.Windows.Forms.ComboBox();
             this.resetBtn = new System.Windows.Forms.Button();
             this.runBtn = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.passBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bufferSize)).BeginInit();
             this.SuspendLayout();
@@ -150,11 +152,29 @@
             this.runBtn.UseVisualStyleBackColor = true;
             this.runBtn.Click += new System.EventHandler(this.RunBtn_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(224, 38);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(33, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Pass:";
+            // 
+            // passBox
+            // 
+            this.passBox.Location = new System.Drawing.Point(275, 35);
+            this.passBox.Name = "passBox";
+            this.passBox.Size = new System.Drawing.Size(177, 20);
+            this.passBox.TabIndex = 12;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(621, 483);
+            this.Controls.Add(this.passBox);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.runBtn);
             this.Controls.Add(this.resetBtn);
             this.Controls.Add(this.bufferType);
@@ -189,6 +209,8 @@
         private System.Windows.Forms.ComboBox bufferType;
         private System.Windows.Forms.Button resetBtn;
         private System.Windows.Forms.Button runBtn;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox passBox;
     }
 }
 

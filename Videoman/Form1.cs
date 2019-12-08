@@ -93,11 +93,11 @@ namespace Videoman
         }
 
         // go() needs to be async 'cause you can only call an async Thread while in an async context
-        private async void go(int bufferMultiplierValue)
+        private async void go(int bufferMultiplierValue, byte[] key)
         {
             try
             {
-                await Task.Run(() => encrypt(file, (int)bufferSize.Value * bufferMultiplierValue, file + ".out.mp4", new byte[] { 0x7c }, encryptCancel.Token));
+                await Task.Run(() => encrypt(file, (int)bufferSize.Value * bufferMultiplierValue, file + ".out.mp4", key, encryptCancel.Token));
             } catch (OperationCanceledException)
             {
                 File.Delete(file + ".out.mp4");
@@ -124,7 +124,9 @@ namespace Videoman
 
         private void RunBtn_Click(object sender, EventArgs e)
         {
-            go(bufferMultiplier(bufferType.Text));
+            if (passBox.Text != "")
+                go(bufferMultiplier(bufferType.Text), Encoding.ASCII.GetBytes(passBox.Text));
+            else MessageBox.Show("Por favor, insira uma senha", "Erro");
         }
 
         private int bufferMultiplier(String name)
