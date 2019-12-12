@@ -30,12 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.fileNameBox = new System.Windows.Forms.TextBox();
             this.selectFile = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.mediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.bufferSize = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.bufferType = new System.Windows.Forms.ComboBox();
@@ -43,7 +43,8 @@
             this.runBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.passBox = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)(this.mediaPlayer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bufferSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -56,13 +57,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Current File:";
             // 
-            // textBox1
+            // fileNameBox
             // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(82, 75);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(527, 20);
-            this.textBox1.TabIndex = 1;
+            this.fileNameBox.Enabled = false;
+            this.fileNameBox.Location = new System.Drawing.Point(82, 75);
+            this.fileNameBox.Name = "fileNameBox";
+            this.fileNameBox.Size = new System.Drawing.Size(370, 20);
+            this.fileNameBox.TabIndex = 1;
             // 
             // selectFile
             // 
@@ -88,14 +89,15 @@
             this.progressBar1.Step = 1;
             this.progressBar1.TabIndex = 4;
             // 
-            // axWindowsMediaPlayer1
+            // mediaPlayer
             // 
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(12, 131);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(597, 340);
-            this.axWindowsMediaPlayer1.TabIndex = 5;
+            this.mediaPlayer.Enabled = true;
+            this.mediaPlayer.Location = new System.Drawing.Point(12, 131);
+            this.mediaPlayer.Name = "mediaPlayer";
+            this.mediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("mediaPlayer.OcxState")));
+            this.mediaPlayer.Size = new System.Drawing.Size(597, 340);
+            this.mediaPlayer.TabIndex = 5;
+            this.mediaPlayer.Tag = "";
             // 
             // bufferSize
             // 
@@ -137,7 +139,7 @@
             this.resetBtn.Name = "resetBtn";
             this.resetBtn.Size = new System.Drawing.Size(75, 21);
             this.resetBtn.TabIndex = 9;
-            this.resetBtn.Text = "Reset";
+            this.resetBtn.Text = "Cancel";
             this.resetBtn.UseVisualStyleBackColor = true;
             this.resetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
             // 
@@ -168,11 +170,21 @@
             this.passBox.Size = new System.Drawing.Size(177, 20);
             this.passBox.TabIndex = 12;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(458, 74);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(150, 21);
+            this.comboBox1.TabIndex = 13;
+            this.comboBox1.Text = "File Format";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(621, 483);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.passBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.runBtn);
@@ -180,15 +192,15 @@
             this.Controls.Add(this.bufferType);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.bufferSize);
-            this.Controls.Add(this.axWindowsMediaPlayer1);
+            this.Controls.Add(this.mediaPlayer);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.selectFile);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.fileNameBox);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "VideoMan";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mediaPlayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bufferSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -198,12 +210,12 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox fileNameBox;
         private System.Windows.Forms.Button selectFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private AxWMPLib.AxWindowsMediaPlayer mediaPlayer;
         private System.Windows.Forms.NumericUpDown bufferSize;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox bufferType;
@@ -211,6 +223,7 @@
         private System.Windows.Forms.Button runBtn;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox passBox;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 
