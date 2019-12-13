@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Text;
 
 namespace Videoman
 {
@@ -10,22 +11,53 @@ namespace Videoman
         private CancellationTokenSource cypherCancelToken;
         private AxWMPLib.AxWindowsMediaPlayer mediaPlayer;
         private System.Windows.Forms.ProgressBar progressBar;
-        public CryptoProvider(ref AxWMPLib.AxWindowsMediaPlayer mediaPlayer, ref System.Windows.Forms.ProgressBar progressBar)
+        private UI mainForm;
+        public CryptoProvider(UI mainForm, ref AxWMPLib.AxWindowsMediaPlayer mediaPlayer, ref System.Windows.Forms.ProgressBar progressBar)
         {
             this.mediaPlayer = mediaPlayer;
             this.progressBar = progressBar;
+            this.mainForm = mainForm;
         }
 
-        public async void Cypher(String path, int bufferSize, byte[] key)
+        public async void Cypher(String path, int bufferSize, byte[] key, bool deleteInput, bool cryptFileName)
         {
+            String output, filen;
             cypherCancelToken = new CancellationTokenSource();
-            String output = path.Contains(".cypher") ? path.Replace(".cypher", ".mp4") : path.Replace(".mp4", ".cypher");
+            bool excep = false;
+            if (cryptFileName)
+            {
+                if (!path.Contains(".cypher"))
+                {
+                    byte[] filename = Encoding.UTF8.GetBytes(Path.GetFileName(path));
+
+                    for (int i = 0; i < filename.Length; i++)
+                        filename[i] ^= key[i % key.Length];
+
+                    filen = System.Convert.ToBase64String(filename) + ".cypher";
+                } else
+                {
+                    byte[] filename = System.Convert.FromBase64String(Path.GetFileNameWithoutExtension(path));
+
+                    for (int i = 0; i < filename.Length; i++)
+                        filename[i] ^= key[i % key.Length];
+
+                    filen = Encoding.UTF8.GetString(filename);
+                }
+                output = Path.GetDirectoryName(path) + "\\" + filen;
+            } else
+                output = path.Contains(".cypher") ? path.Replace(".cypher", "") : path + ".cypher";
             try
             {
                 await Task.Run(() => RunCypher(path, bufferSize, output, key, cypherCancelToken.Token));
             } catch (OperationCanceledException)
             {
                 File.Delete(output);
+                excep = true;
+            } finally
+            {
+                if (deleteInput && !excep)
+                    File.Delete(path);
+                mainForm.EnableUI(true);
             }
             cypherCancelToken.Dispose();
         }
@@ -48,7 +80,7 @@ namespace Videoman
                 chunksize = chunksize <= fullsize ? chunksize : (int)fullsize;
                 // Get the number of steps used in the progressbar
                 long maximum = fullsize / chunksize;
-                // Need to invoke action because we're in an async thread and it has no access to main thread's progressBar1
+                // Need to invoke action because we're in an async thread and it has no access to main thread's progressBar
                 progressBar.Invoke(new Action(() =>
                 {
                     progressBar.Maximum = (int)maximum + 1;
@@ -59,8 +91,6 @@ namespace Videoman
                 long currentBuffer;
                 int i;
                 var buffer = new byte[chunksize];
-
-                //Task updateVideo = DelayUpdateVideoURL(output, 5000);
 
                 while ((bytesRead = fs.Read(buffer, 0, chunksize <= currentBytesRemaining ? chunksize : (int)currentBytesRemaining)) > 0)
                 {
@@ -83,13 +113,6 @@ namespace Videoman
             {
                 progressBar.Value = 0;
             }));
-            Task updateVideo = DelayUpdateVideoURL(output, 0);
-        }
-
-        private async Task DelayUpdateVideoURL(String url, int delay)
-        {
-            await Task.Delay(delay);
-            mediaPlayer.URL = url;
         }
     }
 }

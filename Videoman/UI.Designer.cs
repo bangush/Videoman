@@ -1,6 +1,6 @@
 ﻿namespace Videoman
 {
-    partial class Form1
+    partial class UI
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
             this.label1 = new System.Windows.Forms.Label();
             this.fileNameBox = new System.Windows.Forms.TextBox();
             this.selectFile = new System.Windows.Forms.Button();
@@ -43,7 +43,9 @@
             this.runBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.passBox = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.encFileCheck = new System.Windows.Forms.CheckBox();
+            this.removeFileCheck = new System.Windows.Forms.CheckBox();
+            this.showPassBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mediaPlayer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bufferSize)).BeginInit();
             this.SuspendLayout();
@@ -51,7 +53,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 78);
+            this.label1.Location = new System.Drawing.Point(12, 81);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 0;
@@ -60,7 +62,7 @@
             // fileNameBox
             // 
             this.fileNameBox.Enabled = false;
-            this.fileNameBox.Location = new System.Drawing.Point(82, 75);
+            this.fileNameBox.Location = new System.Drawing.Point(81, 78);
             this.fileNameBox.Name = "fileNameBox";
             this.fileNameBox.Size = new System.Drawing.Size(370, 20);
             this.fileNameBox.TabIndex = 1;
@@ -82,7 +84,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 101);
+            this.progressBar1.Location = new System.Drawing.Point(12, 113);
             this.progressBar1.Maximum = 10000;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(597, 23);
@@ -92,10 +94,10 @@
             // mediaPlayer
             // 
             this.mediaPlayer.Enabled = true;
-            this.mediaPlayer.Location = new System.Drawing.Point(12, 131);
+            this.mediaPlayer.Location = new System.Drawing.Point(12, 145);
             this.mediaPlayer.Name = "mediaPlayer";
             this.mediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("mediaPlayer.OcxState")));
-            this.mediaPlayer.Size = new System.Drawing.Size(597, 340);
+            this.mediaPlayer.Size = new System.Drawing.Size(597, 326);
             this.mediaPlayer.TabIndex = 5;
             this.mediaPlayer.Tag = "";
             // 
@@ -157,7 +159,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(224, 38);
+            this.label3.Location = new System.Drawing.Point(224, 43);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(33, 13);
             this.label3.TabIndex = 11;
@@ -165,26 +167,51 @@
             // 
             // passBox
             // 
-            this.passBox.Location = new System.Drawing.Point(275, 35);
+            this.passBox.Location = new System.Drawing.Point(274, 40);
             this.passBox.Name = "passBox";
-            this.passBox.Size = new System.Drawing.Size(177, 20);
+            this.passBox.PasswordChar = '•';
+            this.passBox.Size = new System.Drawing.Size(146, 20);
             this.passBox.TabIndex = 12;
             // 
-            // comboBox1
+            // encFileCheck
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(458, 74);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(150, 21);
-            this.comboBox1.TabIndex = 13;
-            this.comboBox1.Text = "File Format";
+            this.encFileCheck.AutoSize = true;
+            this.encFileCheck.Location = new System.Drawing.Point(458, 67);
+            this.encFileCheck.Name = "encFileCheck";
+            this.encFileCheck.Size = new System.Drawing.Size(104, 17);
+            this.encFileCheck.TabIndex = 13;
+            this.encFileCheck.Text = "Cypher file name";
+            this.encFileCheck.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // removeFileCheck
+            // 
+            this.removeFileCheck.AutoSize = true;
+            this.removeFileCheck.Location = new System.Drawing.Point(458, 90);
+            this.removeFileCheck.Name = "removeFileCheck";
+            this.removeFileCheck.Size = new System.Drawing.Size(99, 17);
+            this.removeFileCheck.TabIndex = 14;
+            this.removeFileCheck.Text = "Remove old file";
+            this.removeFileCheck.UseVisualStyleBackColor = true;
+            // 
+            // showPassBtn
+            // 
+            this.showPassBtn.Location = new System.Drawing.Point(426, 38);
+            this.showPassBtn.Name = "showPassBtn";
+            this.showPassBtn.Size = new System.Drawing.Size(25, 23);
+            this.showPassBtn.TabIndex = 15;
+            this.showPassBtn.Text = "S";
+            this.showPassBtn.UseVisualStyleBackColor = true;
+            this.showPassBtn.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ShowPassBtn_MouseDown);
+            this.showPassBtn.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ShowPassBtn_MouseUp);
+            // 
+            // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(621, 483);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.showPassBtn);
+            this.Controls.Add(this.removeFileCheck);
+            this.Controls.Add(this.encFileCheck);
             this.Controls.Add(this.passBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.runBtn);
@@ -197,7 +224,7 @@
             this.Controls.Add(this.selectFile);
             this.Controls.Add(this.fileNameBox);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
+            this.Name = "UI";
             this.Text = "VideoMan";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.mediaPlayer)).EndInit();
@@ -223,7 +250,9 @@
         private System.Windows.Forms.Button runBtn;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox passBox;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.CheckBox encFileCheck;
+        private System.Windows.Forms.CheckBox removeFileCheck;
+        private System.Windows.Forms.Button showPassBtn;
     }
 }
 
